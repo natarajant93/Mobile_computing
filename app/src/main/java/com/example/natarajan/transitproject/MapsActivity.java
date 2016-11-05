@@ -2,6 +2,7 @@ package com.example.natarajan.transitproject;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,10 +38,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        double latitude=0, longitude=0;
 
+        GPSTracker tracker = new GPSTracker(this);
+        if (!tracker.canGetLocation()) {
+            tracker.showSettingsAlert();
+        } else {
+            latitude = tracker.getLatitude();
+            longitude = tracker.getLongitude();
+        }
+        Toast.makeText(getBaseContext(), ""+latitude+" "+longitude, Toast.LENGTH_LONG).show();
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng current_location = new LatLng(latitude, longitude);
+        mMap.addMarker(new MarkerOptions().position(current_location).title("Marker in current location"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(current_location));
     }
 }
