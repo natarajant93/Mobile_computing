@@ -1,7 +1,10 @@
 package com.example.natarajan.transitproject;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -11,6 +14,8 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.TextUtils;
@@ -52,6 +57,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Time;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,7 +77,7 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
     LocationRequest mLocationRequest;
     LatLng latLng;
     private static final String TAG = "MainActivity";
-    LatLng destination;
+    LatLng destination = null;
     LatLng origin;
     private Button btnFindPath;
     private List<Marker> originMarkers = new ArrayList<>();
@@ -231,9 +238,16 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
     public void drawroute(View view){
 
         if (polylinePaths != null) {
-            for (Polyline polyline:polylinePaths ) {
+            /*for (Polyline polyline:polylinePaths ) {
                 polyline.remove();
-            }
+            }*/
+            mMap.clear();
+        }
+        if(destination == null)
+        {
+            Toast t = Toast.makeText(getApplicationContext(), "Please Enter Destination", Toast.LENGTH_LONG);
+            t.show();
+            return;
         }
         //LatLng origin = latLng;
         LatLng org = origin;
@@ -251,12 +265,26 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
     public void nearestbusstop(View view){
 
         if (polylinePaths != null) {
-            for (Polyline polyline:polylinePaths ) {
+            /*for (Polyline polyline:polylinePaths ) {
                 polyline.remove();
+            }*/
+            mMap.clear();
+        }
+        double[][] destarr = new double[][]{{33.42545,-111.935051},{33.40011949999999,-111.9396863},{33.4168477,-111.91795079999997},{33.4161907,-111.92257770000003},{33.42556299999999,-111.935923},{33.4177003,-111.93435210000001}};
+        double mindist = 100.0;
+        int lt=0;
+        for(int i=0; i<6; i++)
+        {
+            LatLng dest1 = new LatLng(destarr[i][0], destarr[i][1]);
+            double dist2 = CalculationByDistance2(dest1);
+            if(dist2<mindist)
+            {
+                lt =i;
+                mindist = dist2;
             }
         }
         LatLng org = origin;
-        LatLng dest = new LatLng(33.42545,-111.935051);
+        LatLng dest = new LatLng(destarr[lt][0],destarr[lt][1]);
         // Getting URL to the Google Directions API
         String url = getUrl2(org, dest);
         FetchUrl FetchUrl = new FetchUrl();
@@ -433,54 +461,60 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
             PolylineOptions lineOptions = null;
             polylinePaths = new ArrayList<>();
 
-            List<HashMap<String, String>> travel = result.get(1);
-            HashMap<String, String> distdur = travel.get(0);
+            try {
+                List<HashMap<String, String>> travel = result.get(1);
+                HashMap<String, String> distdur = travel.get(0);
 
-            System.out.println(distdur.get("time"));
-            System.out.println(distdur.get("distance"));
-            //Diatance and Time
-            ((TextView) findViewById(R.id.tvDuration)).setText(distdur.get("time"));
-            ((TextView) findViewById(R.id.tvDistance)).setText(distdur.get("distance"));
+                System.out.println(distdur.get("time"));
+                System.out.println(distdur.get("distance"));
+                //Diatance and Time
+                ((TextView) findViewById(R.id.tvDuration)).setText(distdur.get("time"));
+                ((TextView) findViewById(R.id.tvDistance)).setText(distdur.get("distance"));
 
-            // Traversing through all the routes
-            for (int i = 0; i < 1; i++) {
-                points = new ArrayList<>();
-                lineOptions = new PolylineOptions();
+                // Traversing through all the routes
+                for (int i = 0; i < 1; i++) {
+                    points = new ArrayList<>();
+                    lineOptions = new PolylineOptions();
 
-                // Fetching i-th route
-                List<HashMap<String, String>> path = result.get(i);
+                    // Fetching i-th route
+                    List<HashMap<String, String>> path = result.get(i);
 
-                // Fetching all the points in i-th route
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap<String, String> point = path.get(j);
+                    // Fetching all the points in i-th route
+                    for (int j = 0; j < path.size(); j++) {
+                        HashMap<String, String> point = path.get(j);
 
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-                    endmarker = position;
-                    points.add(position);
+                        double lat = Double.parseDouble(point.get("lat"));
+                        double lng = Double.parseDouble(point.get("lng"));
+                        LatLng position = new LatLng(lat, lng);
+                        endmarker = position;
+                        points.add(position);
+                    }
+
+                    // Adding all the points in the route to LineOptions
+                    lineOptions.addAll(points);
+                    lineOptions.width(10);
+                    lineOptions.color(Color.BLUE);
+
+                    Log.d("onPostExecute", "onPostExecute lineoptions decoded");
+
                 }
+                System.out.println("End Marker : " + endmarker);
 
-                // Adding all the points in the route to LineOptions
-                lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(Color.BLUE);
-
-                Log.d("onPostExecute","onPostExecute lineoptions decoded");
-
+                // Drawing polyline in the Google Map for the i-th route
+                if (lineOptions != null) {
+                    mMap.addPolyline(lineOptions);
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                            .position(endmarker));
+                    polylinePaths.add(mMap.addPolyline(lineOptions));
+                } else {
+                    Log.d("onPostExecute", "without Polylines drawn");
+                }
             }
-            System.out.println("End Marker : "+endmarker);
-
-            // Drawing polyline in the Google Map for the i-th route
-            if(lineOptions != null) {
-                mMap.addPolyline(lineOptions);
-                mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                        .position(endmarker));
-                polylinePaths.add(mMap.addPolyline(lineOptions));
-            }
-            else {
-                Log.d("onPostExecute","without Polylines drawn");
+            catch (IndexOutOfBoundsException e)
+            {
+                Toast.makeText(getApplicationContext(),"Transit Route not available", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -527,6 +561,7 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         origin = latLng;
+        CalculationByDistance(origin);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
@@ -544,6 +579,86 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
         }
 
     }
+//---------------Notification------------------
+public double CalculationByDistance2(LatLng EndP) {
+    LatLng StartP = origin;
+    if(StartP == null)
+    {
+        return 0;
+    }
+    int Radius = 6371;// radius of earth in Km
+    double lat1 = StartP.latitude;
+    double lat2 = EndP.latitude;
+    double lon1 = StartP.longitude;
+    double lon2 = EndP.longitude;
+    double dLat = Math.toRadians(lat2 - lat1);
+    double dLon = Math.toRadians(lon2 - lon1);
+    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+            + Math.cos(Math.toRadians(lat1))
+            * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+            * Math.sin(dLon / 2);
+    double c = 2 * Math.asin(Math.sqrt(a));
+    double valueResult = Radius * c;
+    double km = valueResult / 1;
+        /*DecimalFormat newFormat = new DecimalFormat("####");
+        int kmInDec = Integer.valueOf(newFormat.format(km));
+        double meter = valueResult % 1000;
+        int meterInDec = Integer.valueOf(newFormat.format(meter));
+        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meterInDec);*/
+
+    return km;
+}
+
+
+    public void CalculationByDistance(LatLng StartP) {
+        LatLng EndP = destination;
+        if(EndP == null)
+        {
+            return;
+        }
+        int Radius = 6371;// radius of earth in Km
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        double valueResult = Radius * c;
+        double km = valueResult / 1;
+        /*DecimalFormat newFormat = new DecimalFormat("####");
+        int kmInDec = Integer.valueOf(newFormat.format(km));
+        double meter = valueResult % 1000;
+        int meterInDec = Integer.valueOf(newFormat.format(meter));
+        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meterInDec);*/
+
+        if(km < 0.5);
+        {
+            showNotification();
+        }
+    }
+
+    public void showNotification(){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("You have a new notification");
+        builder.setContentText("Your stop is near");
+        Intent intent = new Intent(this, MapsActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MapsActivity.class);
+        stackBuilder.addNextIntent(intent);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        NotificationManager NM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NM.notify(0,builder.build());
+    }
+//--------------------------------------------------------------
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
