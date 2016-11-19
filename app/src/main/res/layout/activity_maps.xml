@@ -62,11 +62,41 @@
             android:layout_height="wrap_content"
             android:id="@+id/nearestbusstop"
             android:onClick="nearestbusstop"
-            android:text="Nearest"
-            android:layout_marginTop="0dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:text="Nearest"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="History"
+            android:onClick="drawroute"
+            android:id="@+id/btnFindPath1" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bus Status"
+            android:onClick="drawroute"
+            android:id="@+id/btnFindPath2" />
+        <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Route Map"
+        android:onClick="drawroute"
+        android:id="@+id/btnFindPath3" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:onClick="drawroute"
+            android:id="@+id/btnFindPath4" />
+    </LinearLayout>
+
 
     <fragment
     android:id="@+id/map"
