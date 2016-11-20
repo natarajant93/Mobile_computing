@@ -47,6 +47,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONObject;
 
@@ -86,6 +88,10 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
     private ProgressDialog progressDialog;
     LatLng endmarker;
 
+    //maitrayee's changes
+    private FirebaseAuth firebaseAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +100,15 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
+        //maitrayee's changes: getting the user logged in from firebase
+        firebaseAuth = FirebaseAuth.getInstance();
+        if (firebaseAuth.getCurrentUser() == null) {
+            finish();
+            startActivity(new Intent(this, SignInUser.class));
+        }
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        //---------------------------------------------------------------
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -729,5 +744,23 @@ public double CalculationByDistance2(LatLng EndP) {
             // other 'case' lines to check for other permissions this app might request.
             // You can add here other case statements according to your requirement.
         }
+    }
+
+    /*
+    Maitrayee's changes:
+    1.bus Status
+    2.logout the user
+     */
+    public void busStatus(View view)
+    {
+        finish();
+        startActivity(new Intent(getApplicationContext(), BusStatusActivity.class));
+    }
+
+    public void logoutUser(View view)
+    {
+        firebaseAuth.signOut();
+        finish();
+        startActivity(new Intent(this, SignInUser.class));
     }
 }

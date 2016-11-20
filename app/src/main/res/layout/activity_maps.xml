@@ -74,27 +74,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="History"
-            android:onClick="drawroute"
-            android:id="@+id/btnFindPath1" />
+            android:onClick=""
+            android:id="@+id/buttonHistory" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bus Status"
-            android:onClick="drawroute"
-            android:id="@+id/btnFindPath2" />
+            android:onClick="busStatus"
+            android:id="@+id/buttonBusStatus" />
         <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Route Map"
-        android:onClick="drawroute"
-        android:id="@+id/btnFindPath3" />
+        android:onClick=""
+        android:id="@+id/buttonRouteMap" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Logout"
-            android:onClick="drawroute"
-            android:id="@+id/btnFindPath4" />
+            android:onClick="logoutUser"
+            android:id="@+id/buttonLogout" />
     </LinearLayout>
 
 
