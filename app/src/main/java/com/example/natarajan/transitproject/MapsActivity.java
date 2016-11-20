@@ -122,9 +122,58 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
         // occurred.
         autocompleteFragment.setOnPlaceSelectedListener(this);
 
+        Button download_button = (Button) findViewById(R.id.buttonRouteMap);
+        download_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent activityChangeIntent = new Intent(MapsActivity.this, ViewMap.class);
+
+                // currentContext.startActivity(activityChangeIntent);
+
+                MapsActivity.this.startActivity(activityChangeIntent);
+
+            }
+        });
+
+        Button view_history_button = (Button) findViewById(R.id.buttonHistory);
+        view_history_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent activityChangeIntent = new Intent(MapsActivity.this, ViewHistory.class);
+                activityChangeIntent.putExtra("origin_lat", origin.latitude+"");
+                activityChangeIntent.putExtra("origin_long", origin.longitude+"");
+                // currentContext.startActivity(activityChangeIntent);
+
+                MapsActivity.this.startActivity(activityChangeIntent);
+
+            }
+        });
 
     }
 
+    @Override
+    protected void onStart() {
+        try {
+            super.onStart();
+            Intent intent = getIntent();
+            String id = intent.getStringExtra("destination");
+            if (id != null) {
+                id = id.replace("(", "");
+                id = id.replace(")", "");
+                id = id.replace("\"", "");
+                String[] latLng = id.split(",");
+                double latitude = Double.parseDouble(latLng[0]);
+                double longitude = Double.parseDouble(latLng[1]);
+                this.destination = new LatLng(latitude, longitude);
+                Double origin_lat = Double.parseDouble(intent.getStringExtra("origin_lat"));
+                Double origin_long = Double.parseDouble(intent.getStringExtra("origin_long"));
+                this.origin = new LatLng(origin_lat, origin_long);
+                drawroute(getCurrentFocus());
+            }
+        }catch(Exception ex) {
+            Toast.makeText(getBaseContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
 
     /**
      * Manipulates the map once available.
@@ -162,6 +211,22 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
     public void onPlaceSelected(Place place) {
         Log.i(TAG, "Place Selected: " + place.getName());
         destination = place.getLatLng();
+
+        DatabaseHelper dbHelper;
+        SQLiteDatabase db;
+        dbHelper = DatabaseHelper.getInstance(this);
+        db = dbHelper.getWritableDatabase();
+        try {
+            db.execSQL("create table IF NOT EXISTS search_history (time_stamp text, destination text, lat_long text)");
+            String timeStamp = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
+            db.execSQL("insert into search_history(time_stamp, destination, lat_long) values('"+timeStamp+"','"+place.getName()+"','"+destination.latitude+","+destination.longitude+"')");
+        }catch(Exception ex) {
+            Toast.makeText(getBaseContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        db.close();
+        dbHelper.close();
+
         System.out.println(destination);
     }
     /**
