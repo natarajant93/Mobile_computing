@@ -75,11 +75,11 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
         LocationListener{
 
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 0;
-    private GoogleMap mMap;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
-    LocationRequest mLocationRequest;
+    static public GoogleMap mMap;
+    static public GoogleApiClient mGoogleApiClient;
+    static public Location mLastLocation;
+    static public Marker mCurrLocationMarker;
+    static public LocationRequest mLocationRequest;
     LatLng latLng;
     private static final String TAG = "MainActivity";
     LatLng destination = null;
@@ -141,14 +141,17 @@ public class MapsActivity extends FragmentActivity implements DirectionFinderLis
         Button view_history_button = (Button) findViewById(R.id.buttonHistory);
         view_history_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                try {
+                    Intent activityChangeIntent = new Intent(MapsActivity.this, ViewHistory.class);
+                    activityChangeIntent.putExtra("origin_lat", origin.latitude + "");
+                    activityChangeIntent.putExtra("origin_long", origin.longitude + "");
+                    // currentContext.startActivity(activityChangeIntent);
 
-                Intent activityChangeIntent = new Intent(MapsActivity.this, ViewHistory.class);
-                activityChangeIntent.putExtra("origin_lat", origin.latitude+"");
-                activityChangeIntent.putExtra("origin_long", origin.longitude+"");
-                // currentContext.startActivity(activityChangeIntent);
+                    MapsActivity.this.startActivity(activityChangeIntent);
+                }catch(Exception ex) {
+                    Toast.makeText(getBaseContext(), ex.getMessage(),Toast.LENGTH_LONG).show();
 
-                MapsActivity.this.startActivity(activityChangeIntent);
-
+                }
             }
         });
 

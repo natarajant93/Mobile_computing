@@ -85,7 +85,7 @@ public class ViewHistory extends AppCompatActivity {
             db.close();
             dbHelper.close();
         }catch(Exception ex) {
-            Toast.makeText(getBaseContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "No search history", Toast.LENGTH_LONG).show();
         }
     }
 }

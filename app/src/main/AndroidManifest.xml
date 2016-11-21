@@ -77,6 +77,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".BusStatusActivity"></activity>
+        <activity android:name=".ViewHistory"></activity>
+        <activity android:name=".ViewMap"></activity>
     </application>
 
 </manifest>
