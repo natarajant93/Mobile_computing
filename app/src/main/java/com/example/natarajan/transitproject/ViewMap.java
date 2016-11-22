@@ -15,5 +15,6 @@ public class ViewMap extends AppCompatActivity {
         //mWebView.getSettings().setPluginsEnabled(true);
         mWebView.loadUrl("https://drive.google.com/open?id=0B1Jt01SaWo2mQ2tQM0V1WjBFUEE");
         setContentView(mWebView);
+        this.finish();
     }
 }
