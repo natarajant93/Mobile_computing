@@ -56,7 +56,7 @@ public class ViewHistory extends AppCompatActivity {
                 TextView t6 = new TextView(this);
                 t6.setText(lat_long);
                 Button bt = new Button(this);
-                bt.setText("SEARCH");
+                bt.setText("Get Directions");
                 bt.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
 

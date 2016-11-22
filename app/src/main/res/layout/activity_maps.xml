@@ -25,44 +25,45 @@
         android:orientation="horizontal"
         android:weightSum="1">
         <Button
+            android:layout_marginLeft="0dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Directions"
+            android:id="@+id/nearestbusstop"
+            android:onClick="nearestbusstop"
+            android:text="Nearest"/>
+        <Button
+            android:layout_width="105dp"
+            android:layout_height="match_parent"
             android:onClick="drawroute"
-            android:id="@+id/btnFindPath" />
+            android:id="@+id/btnFindPath"
+            android:text="Directions"/>
         <ImageView
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="0dp"
             android:layout_marginTop="5dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/distance"/>
         <TextView
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="0dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 km"
             android:id="@+id/tvDistance" />
 
         <ImageView
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="0dp"
             android:layout_marginTop="5dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="5dp"
             android:src="@drawable/clock"/>
         <TextView
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="0dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 min"
             android:id="@+id/tvDuration" />
-        <Button
-            android:layout_marginLeft="0dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/nearestbusstop"
-            android:onClick="nearestbusstop"
-            android:text="Nearest"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -89,10 +90,12 @@
         android:onClick=""
         android:id="@+id/buttonRouteMap" />
 
-        <Button
+        <ImageButton
+            android:layout_marginTop="0dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Logout"
+            android:layout_height="50dp"
+            android:src="@drawable/logout"
+            android:scaleType="fitCenter"
             android:onClick="logoutUser"
             android:id="@+id/buttonLogout" />
     </LinearLayout>
