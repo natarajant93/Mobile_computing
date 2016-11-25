@@ -29,7 +29,7 @@ public class SignInDriver extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in_user);
+        setContentView(R.layout.activity_sign_in_driver);
 
         progressDialog = new ProgressDialog(this);
 
